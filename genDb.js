@@ -1,11 +1,11 @@
 const db = {
-  sample: [],
+  users: [],
 };
 
 for (let i = 0; i < 5; i++) {
-  db.sample.push({
+  db.users.push({
     id: i,
-    name: 'hoge' + i,
+    name: 'userName' + i,
   });
 }
 
