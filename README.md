@@ -3,10 +3,11 @@
 Redux Toolkit の雛形
 
 - React 17.0.2
+- Redux-Toolkit: 1.8.0
 - TypeScript 4.1.5
 - react-router-dom 6.2.2
 - axios 0.26.0
-- Recoil 0.6.1
+- normalizr: 3.6.1
 - MUI 5.4.4
 - Storybook 6.4.19
 
