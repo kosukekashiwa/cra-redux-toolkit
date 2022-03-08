@@ -1,5 +1,4 @@
 import React, { useCallback } from 'react';
-import { Counter } from '../features/counter/Counter';
 import { Box, Button, Card, CardContent, Stack } from '@mui/material';
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import { useAppDispatch, useAppSelector, useFetch } from '../state/hooks';
@@ -51,11 +50,6 @@ const SampleComponent: React.VFC = () => {
   return (
     <Box>
       <Stack spacing={1}>
-        <Card>
-          <CardContent>
-            <Counter />
-          </CardContent>
-        </Card>
         <Card>
           <CardContent>
             <Stack direction="column" spacing={1}>
