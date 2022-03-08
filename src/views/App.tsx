@@ -17,13 +17,14 @@ import {
   getArticles,
 } from '../state/ducks/article/slices';
 import { RootState } from '../state/store';
+import AppRouterLayout from './AppRouterLayout';
 
 const App: React.VFC = () => {
   return (
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Navigate to="cra-app" />} />
-        <Route path="cra-app">
+        <Route path="cra-app" element={<AppRouterLayout />}>
           <Route index element={<Navigate to="dashbord" />} />
           <Route path="dashbord" element={<SampleComponent />} />
         </Route>
