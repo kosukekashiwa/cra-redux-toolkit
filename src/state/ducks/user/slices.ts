@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { client } from '../../apiClient';
 import { RootState } from '../../store';
-import { fetchArticles } from '../article/slices';
+import { fetchArticle, fetchArticles } from '../article/slices';
 import {
   denormalizeUsers,
   NormalizedUsers,
@@ -58,12 +58,19 @@ export const userSlice = createSlice({
     });
     builder.addCase(fetchArticles.fulfilled, (state, action) => {
       state.dataReady = true;
-      Object.values(action.payload.entities[userNormalizrSchemaKey]).forEach((user) => {
+      Object.values(action.payload.users).forEach((user) => {
         if (!state.data.entities[user.id]) {
           state.data.ids.push(user.id);
         }
         state.data.entities[user.id] = user;
       });
+    });
+    builder.addCase(fetchArticle.fulfilled, (state, action) => {
+      state.dataReady = true;
+      if (!state.data.entities[action.payload.user.id]) {
+        state.data.ids.push(action.payload.user.id);
+      }
+      state.data.entities[action.payload.user.id] = action.payload.user;
     });
   },
 });
@@ -74,7 +81,6 @@ export const getUsers = ({ user }: RootState) =>
     result: user.data.ids,
     entities: { [userNormalizrSchemaKey]: user.data.entities },
   });
-
 export const getUser = ({ user }: RootState, id: number) => user.data.entities[id];
 
 export default userSlice.reducer;

@@ -4,7 +4,12 @@ import { Box, Button, Card, CardContent, Stack } from '@mui/material';
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../state/hooks';
 import { fetchUser, fetchUsers, getUser, getUsers } from '../state/ducks/user/slices';
-import { fetchArticles, getArticles } from '../state/ducks/article/slices';
+import {
+  fetchArticle,
+  fetchArticles,
+  getArticle,
+  getArticles,
+} from '../state/ducks/article/slices';
 import { RootState } from '../state/store';
 
 const App: React.VFC = () => {
@@ -25,6 +30,7 @@ const SampleComponent: React.VFC = () => {
   const users = useAppSelector(getUsers);
   const user = useAppSelector((state: RootState) => getUser(state, 1));
   const articles = useAppSelector(getArticles);
+  const article = useAppSelector((state: RootState) => getArticle(state, 1));
 
   const dispatch = useAppDispatch();
   const hadleUsersClick = useCallback(() => {
@@ -35,6 +41,9 @@ const SampleComponent: React.VFC = () => {
   }, [dispatch]);
   const hadleArticlesClick = useCallback(() => {
     dispatch(fetchArticles());
+  }, [dispatch]);
+  const hadleArticleClick = useCallback(() => {
+    dispatch(fetchArticle(1));
   }, [dispatch]);
 
   return (
@@ -73,17 +82,30 @@ const SampleComponent: React.VFC = () => {
         </Card>
         <Card>
           <CardContent>
-            <Box>Articles</Box>
-            <Box>
-              <Button variant="outlined" onClick={hadleArticlesClick}>
-                Fetch
-              </Button>
-            </Box>
-            {articles.map((article) => (
-              <Box key={article.id}>
-                {article.title} {article.author.name}
+            <Stack>
+              <Box>
+                <Box>Articles</Box>
+                <Box>
+                  <Button variant="outlined" onClick={hadleArticlesClick}>
+                    Fetch
+                  </Button>
+                </Box>
+                {articles.map((article) => (
+                  <Box key={article.id}>
+                    {article.title} {article.author.name}
+                  </Box>
+                ))}
               </Box>
-            ))}
+              <Box>
+                <Box>Article</Box>
+                <Box>
+                  <Button variant="outlined" onClick={hadleArticleClick}>
+                    Fetch
+                  </Button>
+                </Box>
+                {article && <Box>id1: {article.title}</Box>}
+              </Box>
+            </Stack>
           </CardContent>
         </Card>
       </Stack>
