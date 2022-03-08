@@ -10,13 +10,13 @@ export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;
 export type FetchStatus = 'idle' | 'loading' | 'success' | 'failed';
 export const useFetch = (
   dataStatus: FetchStatus,
-  dataNotReadyAction: ActionCreatorWithoutPayload<string>,
+  stateIdlingAction: ActionCreatorWithoutPayload<string>,
   // eslint-disable-next-line
   fetchAction: ThunkAction<any, any, any, any>,
 ): void => {
   const dispatch = useAppDispatch();
   useEffect(() => {
-    dispatch(dataNotReadyAction);
+    dispatch(stateIdlingAction);
   }, []);
   useEffect(() => {
     if (dataStatus === 'idle') {

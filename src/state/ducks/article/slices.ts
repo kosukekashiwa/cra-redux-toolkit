@@ -49,7 +49,7 @@ export const articleSlice = createSlice({
   name: 'article',
   initialState,
   reducers: {
-    articleDataNotReady: (state) => {
+    articleStateIdling: (state) => {
       state.status = 'idle';
     },
   },
@@ -76,7 +76,7 @@ export const articleSlice = createSlice({
 });
 
 // action
-export const { articleDataNotReady } = articleSlice.actions;
+export const { articleStateIdling } = articleSlice.actions;
 
 // selectors
 export const getArticleDataStatus = ({ article }: RootState) => article.status;

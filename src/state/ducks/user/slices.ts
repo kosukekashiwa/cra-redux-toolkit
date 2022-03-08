@@ -41,7 +41,7 @@ export const userSlice = createSlice({
   name: 'user',
   initialState,
   reducers: {
-    userDataNotReady: (state) => {
+    userStateIdling: (state) => {
       state.status = 'idle';
     },
   },
@@ -88,7 +88,7 @@ export const userSlice = createSlice({
 });
 
 // action
-export const { userDataNotReady } = userSlice.actions;
+export const { userStateIdling } = userSlice.actions;
 
 // selectors
 export const getUserDataStatus = ({ user }: RootState) => user.status;
