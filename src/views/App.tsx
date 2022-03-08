@@ -3,8 +3,9 @@ import { Counter } from '../features/counter/Counter';
 import { Box, Button, Card, CardContent, Stack } from '@mui/material';
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../state/hooks';
-import { fetchUsers, getUsers } from '../state/ducks/user/slices';
+import { fetchUser, fetchUsers, getUser, getUsers } from '../state/ducks/user/slices';
 import { fetchArticles, getArticles } from '../state/ducks/article/slices';
+import { RootState } from '../state/store';
 
 const App: React.VFC = () => {
   return (
@@ -22,11 +23,15 @@ const App: React.VFC = () => {
 
 const SampleComponent: React.VFC = () => {
   const users = useAppSelector(getUsers);
+  const user = useAppSelector((state: RootState) => getUser(state, 1));
   const articles = useAppSelector(getArticles);
 
   const dispatch = useAppDispatch();
   const hadleUsersClick = useCallback(() => {
     dispatch(fetchUsers());
+  }, [dispatch]);
+  const hadleUserClick = useCallback(() => {
+    dispatch(fetchUser(1));
   }, [dispatch]);
   const hadleArticlesClick = useCallback(() => {
     dispatch(fetchArticles());
@@ -42,15 +47,28 @@ const SampleComponent: React.VFC = () => {
         </Card>
         <Card>
           <CardContent>
-            <Box>Users</Box>
-            <Box>
-              <Button variant="outlined" onClick={hadleUsersClick}>
-                Fetch
-              </Button>
-            </Box>
-            {users.map((user) => (
-              <Box key={user.id}>{user.name}</Box>
-            ))}
+            <Stack direction="column" spacing={1}>
+              <Box>
+                <Box>Users</Box>
+                <Box>
+                  <Button variant="outlined" onClick={hadleUsersClick}>
+                    Fetch
+                  </Button>
+                </Box>
+                {users.map((user) => (
+                  <Box key={user.id}>{user.name}</Box>
+                ))}
+              </Box>
+              <Box>
+                <Box>User</Box>
+                <Box>
+                  <Button variant="outlined" onClick={hadleUserClick}>
+                    Fetch
+                  </Button>
+                </Box>
+                {user && <Box>id1: {user.name}</Box>}
+              </Box>
+            </Stack>
           </CardContent>
         </Card>
         <Card>
