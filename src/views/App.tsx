@@ -4,6 +4,7 @@ import { Box, Button, Card, CardContent, Stack } from '@mui/material';
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../state/hooks';
 import { fetchUsers, getUsers } from '../state/ducks/user/slices';
+import { fetchArticles, getArticles } from '../state/ducks/article/slices';
 
 const App: React.VFC = () => {
   return (
@@ -21,9 +22,14 @@ const App: React.VFC = () => {
 
 const SampleComponent: React.VFC = () => {
   const users = useAppSelector(getUsers);
+  const articles = useAppSelector(getArticles);
+
   const dispatch = useAppDispatch();
-  const hadleClick = useCallback(() => {
+  const hadleUsersClick = useCallback(() => {
     dispatch(fetchUsers());
+  }, [dispatch]);
+  const hadleArticlesClick = useCallback(() => {
+    dispatch(fetchArticles());
   }, [dispatch]);
 
   return (
@@ -38,12 +44,27 @@ const SampleComponent: React.VFC = () => {
           <CardContent>
             <Box>Users</Box>
             <Box>
-              <Button variant="outlined" onClick={hadleClick}>
-                fetch
+              <Button variant="outlined" onClick={hadleUsersClick}>
+                Fetch
               </Button>
             </Box>
             {users.map((user) => (
               <Box key={user.id}>{user.name}</Box>
+            ))}
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent>
+            <Box>Articles</Box>
+            <Box>
+              <Button variant="outlined" onClick={hadleArticlesClick}>
+                Fetch
+              </Button>
+            </Box>
+            {articles.map((article) => (
+              <Box key={article.id}>
+                {article.title} {article.author.name}
+              </Box>
             ))}
           </CardContent>
         </Card>

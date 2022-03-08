@@ -1,6 +1,7 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { client } from '../../apiClient';
 import { RootState } from '../../store';
+import { fetchArticles } from '../article/slices';
 import {
   denormalizeUsers,
   NormalizedUsers,
@@ -33,6 +34,9 @@ export const userSlice = createSlice({
   initialState,
   reducers: {},
   extraReducers: (builder) => {
+    builder.addCase(fetchUsers.rejected, (state) => {
+      state.dataReady = false;
+    });
     builder.addCase(fetchUsers.pending, (state) => {
       state.dataReady = false;
     });
@@ -40,6 +44,15 @@ export const userSlice = createSlice({
       state.dataReady = true;
       state.data.ids = action.payload.result;
       state.data.entities = action.payload.entities[userNormalizrSchemaKey];
+    });
+    builder.addCase(fetchArticles.fulfilled, (state, action) => {
+      state.dataReady = true;
+      Object.values(action.payload.entities[userNormalizrSchemaKey]).forEach((user) => {
+        if (!state.data.entities[user.id]) {
+          state.data.ids.push(user.id);
+        }
+        state.data.entities[user.id] = user;
+      });
     });
   },
 });
