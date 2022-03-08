@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { client } from '../../apiClient';
+import { FetchStatus } from '../../hooks';
 import { RootState } from '../../store';
 import { fetchArticle, fetchArticles } from '../article/slices';
 import {
@@ -11,12 +12,12 @@ import {
 } from './models';
 
 export type UserState = {
-  dataReady: boolean;
+  status: FetchStatus;
   data: { ids: User['id'][]; entities: NormalizedUsers };
 };
 
 const initialState: UserState = {
-  dataReady: false,
+  status: 'idle',
   data: { ids: [], entities: {} },
 };
 
@@ -31,33 +32,44 @@ export const fetchUser = createAsyncThunk('user/get', async (id: number) => {
   const response = await client.get<User>(`/users/${id}`);
   return response.data;
 });
+export const postUser = createAsyncThunk('user/post', async (name: string) => {
+  await client.post(`/users`, { name });
+});
 
 // slice(action & reducer)
 export const userSlice = createSlice({
   name: 'user',
   initialState,
-  reducers: {},
+  reducers: {
+    userDataNotReady: (state) => {
+      state.status = 'idle';
+    },
+  },
   extraReducers: (builder) => {
     builder.addCase(fetchUsers.rejected, (state) => {
-      state.dataReady = false;
+      state.status = 'failed';
     });
     builder.addCase(fetchUsers.pending, (state) => {
-      state.dataReady = false;
+      state.status = 'loading';
     });
     builder.addCase(fetchUsers.fulfilled, (state, action) => {
-      state.dataReady = true;
+      state.status = 'success';
       state.data.ids = action.payload.result;
       state.data.entities = action.payload.entities[userNormalizrSchemaKey];
     });
     builder.addCase(fetchUser.fulfilled, (state, action) => {
-      state.dataReady = true;
+      state.status = 'success';
       if (!state.data.entities[action.payload.id]) {
         state.data.ids.push(action.payload.id);
       }
       state.data.entities[action.payload.id] = action.payload;
     });
+    builder.addCase(postUser.fulfilled, (state) => {
+      state.status = 'idle';
+    });
+    // chenge state by article
     builder.addCase(fetchArticles.fulfilled, (state, action) => {
-      state.dataReady = true;
+      state.status = 'success';
       Object.values(action.payload.users).forEach((user) => {
         if (!state.data.entities[user.id]) {
           state.data.ids.push(user.id);
@@ -66,7 +78,7 @@ export const userSlice = createSlice({
       });
     });
     builder.addCase(fetchArticle.fulfilled, (state, action) => {
-      state.dataReady = true;
+      state.status = 'success';
       if (!state.data.entities[action.payload.user.id]) {
         state.data.ids.push(action.payload.user.id);
       }
@@ -75,7 +87,11 @@ export const userSlice = createSlice({
   },
 });
 
+// action
+export const { userDataNotReady } = userSlice.actions;
+
 // selectors
+export const getUserDataStatus = ({ user }: RootState) => user.status;
 export const getUsers = ({ user }: RootState) =>
   denormalizeUsers({
     result: user.data.ids,

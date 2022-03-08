@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { client } from '../../apiClient';
+import { FetchStatus } from '../../hooks';
 import { RootState } from '../../store';
 import { userNormalizrSchemaKey } from '../user/models';
 import {
@@ -11,12 +12,12 @@ import {
 } from './models';
 
 export type ArticleState = {
-  dataReady: boolean;
+  status: FetchStatus;
   data: { ids: Article['id'][]; entities: NormalizedArticles };
 };
 
 const initialState: ArticleState = {
-  dataReady: false,
+  status: 'idle',
   data: { ids: [], entities: {} },
 };
 
@@ -36,7 +37,9 @@ export const fetchArticle = createAsyncThunk('article/get', async (id: number) =
   // Normalized the data before passing it to our reducer
   const normalized = normalizeArticles([response.data]);
   return {
+    // eslint-disable-next-line
     article: Object.values(normalized.entities[articleNormalizrSchemaKey]).pop()!,
+    // eslint-disable-next-line
     user: Object.values(normalized.entities[userNormalizrSchemaKey]).pop()!,
   };
 });
@@ -45,21 +48,25 @@ export const fetchArticle = createAsyncThunk('article/get', async (id: number) =
 export const articleSlice = createSlice({
   name: 'article',
   initialState,
-  reducers: {},
+  reducers: {
+    articleDataNotReady: (state) => {
+      state.status = 'idle';
+    },
+  },
   extraReducers: (builder) => {
     builder.addCase(fetchArticles.rejected, (state) => {
-      state.dataReady = false;
+      state.status = 'failed';
     });
     builder.addCase(fetchArticles.pending, (state) => {
-      state.dataReady = false;
+      state.status = 'loading';
     });
     builder.addCase(fetchArticles.fulfilled, (state, action) => {
-      state.dataReady = true;
+      state.status = 'success';
       state.data.ids = action.payload.ids;
       state.data.entities = action.payload.articles;
     });
     builder.addCase(fetchArticle.fulfilled, (state, action) => {
-      state.dataReady = true;
+      state.status = 'idle';
       if (!state.data.entities[action.payload.article.id]) {
         state.data.ids.push(action.payload.article.id);
       }
@@ -68,7 +75,11 @@ export const articleSlice = createSlice({
   },
 });
 
+// action
+export const { articleDataNotReady } = articleSlice.actions;
+
 // selectors
+export const getArticleDataStatus = ({ article }: RootState) => article.status;
 export const getArticles = ({ article, user }: RootState) =>
   denormalizeArticles({
     result: article.data.ids,
