@@ -1,7 +1,7 @@
 import React from 'react';
 import BaseSmallButton, { BaseSmallButtonProps } from './BaseSmallButton';
 
-export type AddButtonProps = Required<Pick<BaseSmallButtonProps, 'onClick'>>;
+export type AddButtonProps = Pick<BaseSmallButtonProps, 'onClick'>;
 
 const AddButton: React.VFC<AddButtonProps> = (props) => {
   return (

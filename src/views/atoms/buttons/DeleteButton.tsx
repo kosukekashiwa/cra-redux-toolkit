@@ -1,7 +1,7 @@
 import React from 'react';
 import BaseSmallButton, { BaseSmallButtonProps } from './BaseSmallButton';
 
-export type DeleteButtonProps = Required<Pick<BaseSmallButtonProps, 'onClick'>>;
+export type DeleteButtonProps = Pick<BaseSmallButtonProps, 'onClick'>;
 
 const DeleteButton: React.VFC<DeleteButtonProps> = (props) => {
   return (
