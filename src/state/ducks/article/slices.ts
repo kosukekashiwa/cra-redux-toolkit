@@ -25,9 +25,15 @@ const initialState: ArticleState = {
 export const fetchArticles = createAsyncThunk('article/getEntities', async () => {
   const response = await client.get<Article[]>(`/articles`);
   const normalized = normalizeArticles(response.data);
+  if (normalized.result.length !== 0) {
+    return {
+      article: { ids: normalized.result, entities: normalized.entities[articleNormalizrSchemaKey] },
+      user: { entities: normalized.entities[userNormalizrSchemaKey] },
+    };
+  }
   return {
-    article: { ids: normalized.result, entities: normalized.entities[articleNormalizrSchemaKey] },
-    user: { entities: normalized.entities[userNormalizrSchemaKey] },
+    article: { ids: [], entities: {} },
+    user: { entities: {} },
   };
 });
 export const fetchArticle = createAsyncThunk('article/getEntity', async (id: number) => {
