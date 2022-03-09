@@ -22,25 +22,22 @@ const initialState: ArticleState = {
 };
 
 // apis
-export const fetchArticles = createAsyncThunk('articles/get', async () => {
+export const fetchArticles = createAsyncThunk('article/getEntities', async () => {
   const response = await client.get<Article[]>(`/articles`);
-  // Normalized the data before passing it to our reducer
   const normalized = normalizeArticles(response.data);
   return {
-    ids: normalized.result,
-    articles: normalized.entities[articleNormalizrSchemaKey],
-    users: normalized.entities[userNormalizrSchemaKey],
+    article: { ids: normalized.result, entities: normalized.entities[articleNormalizrSchemaKey] },
+    user: { entities: normalized.entities[userNormalizrSchemaKey] },
   };
 });
-export const fetchArticle = createAsyncThunk('article/get', async (id: number) => {
+export const fetchArticle = createAsyncThunk('article/getEntity', async (id: number) => {
   const response = await client.get<Article>(`/articles/${id}`);
-  // Normalized the data before passing it to our reducer
   const normalized = normalizeArticles([response.data]);
   return {
     // eslint-disable-next-line
-    article: Object.values(normalized.entities[articleNormalizrSchemaKey]).pop()!,
+    article: { entity: Object.values(normalized.entities[articleNormalizrSchemaKey]).pop()! },
     // eslint-disable-next-line
-    user: Object.values(normalized.entities[userNormalizrSchemaKey]).pop()!,
+    user: { entity: Object.values(normalized.entities[userNormalizrSchemaKey]).pop()! },
   };
 });
 
@@ -62,15 +59,15 @@ export const articleSlice = createSlice({
     });
     builder.addCase(fetchArticles.fulfilled, (state, action) => {
       state.status = 'success';
-      state.data.ids = action.payload.ids;
-      state.data.entities = action.payload.articles;
+      state.data.ids = action.payload.article.ids;
+      state.data.entities = action.payload.article.entities;
     });
     builder.addCase(fetchArticle.fulfilled, (state, action) => {
       state.status = 'idle';
-      if (!state.data.entities[action.payload.article.id]) {
-        state.data.ids.push(action.payload.article.id);
+      if (!state.data.entities[action.payload.article.entity.id]) {
+        state.data.ids.push(action.payload.article.entity.id);
       }
-      state.data.entities[action.payload.article.id] = action.payload.article;
+      state.data.entities[action.payload.article.entity.id] = action.payload.article.entity;
     });
   },
 });

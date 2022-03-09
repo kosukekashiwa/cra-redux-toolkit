@@ -22,17 +22,16 @@ const initialState: UserState = {
 };
 
 // apis
-export const fetchUsers = createAsyncThunk('users/get', async () => {
+export const fetchUsers = createAsyncThunk('user/getEntities', async () => {
   const response = await client.get<User[]>(`/users`);
-  // Normalized the data before passing it to our reducer
   const normalized = normalizeUsers(response.data);
-  return normalized;
+  return { user: { ids: normalized.result, entites: normalized.entities } };
 });
-export const fetchUser = createAsyncThunk('user/get', async (id: number) => {
+export const fetchUser = createAsyncThunk('user/getEntity', async (id: number) => {
   const response = await client.get<User>(`/users/${id}`);
-  return response.data;
+  return { user: { entity: response.data } };
 });
-export const postUser = createAsyncThunk('user/post', async (name: string) => {
+export const postUser = createAsyncThunk('user/postEntity', async (name: string) => {
   await client.post(`/users`, { name });
 });
 
@@ -54,15 +53,15 @@ export const userSlice = createSlice({
     });
     builder.addCase(fetchUsers.fulfilled, (state, action) => {
       state.status = 'success';
-      state.data.ids = action.payload.result;
-      state.data.entities = action.payload.entities[userNormalizrSchemaKey];
+      state.data.ids = action.payload.user.ids;
+      state.data.entities = action.payload.user.entites[userNormalizrSchemaKey];
     });
     builder.addCase(fetchUser.fulfilled, (state, action) => {
       state.status = 'success';
-      if (!state.data.entities[action.payload.id]) {
-        state.data.ids.push(action.payload.id);
+      if (!state.data.entities[action.payload.user.entity.id]) {
+        state.data.ids.push(action.payload.user.entity.id);
       }
-      state.data.entities[action.payload.id] = action.payload;
+      state.data.entities[action.payload.user.entity.id] = action.payload.user.entity;
     });
     builder.addCase(postUser.fulfilled, (state) => {
       state.status = 'idle';
@@ -70,7 +69,7 @@ export const userSlice = createSlice({
     // chenge state by article
     builder.addCase(fetchArticles.fulfilled, (state, action) => {
       state.status = 'success';
-      Object.values(action.payload.users).forEach((user) => {
+      Object.values(action.payload.user.entities).forEach((user) => {
         if (!state.data.entities[user.id]) {
           state.data.ids.push(user.id);
         }
@@ -79,10 +78,10 @@ export const userSlice = createSlice({
     });
     builder.addCase(fetchArticle.fulfilled, (state, action) => {
       state.status = 'success';
-      if (!state.data.entities[action.payload.user.id]) {
-        state.data.ids.push(action.payload.user.id);
+      if (!state.data.entities[action.payload.user.entity.id]) {
+        state.data.ids.push(action.payload.user.entity.id);
       }
-      state.data.entities[action.payload.user.id] = action.payload.user;
+      state.data.entities[action.payload.user.entity.id] = action.payload.user.entity;
     });
   },
 });
