@@ -15,8 +15,8 @@ for (let i = 0; i < 5; i++) {
     id: i,
     title: 'articleTitle' + i,
     author: {
-      id: i % 2,
-      name: `authorName-${i % 2}`,
+      id: i % 3,
+      name: `authorName-${i % 3}`,
     },
   });
 }

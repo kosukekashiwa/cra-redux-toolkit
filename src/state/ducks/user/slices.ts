@@ -25,7 +25,12 @@ const initialState: UserState = {
 export const fetchUsers = createAsyncThunk('user/getEntities', async () => {
   const response = await client.get<User[]>(`/users`);
   const normalized = normalizeUsers(response.data);
-  return { user: { ids: normalized.result, entites: normalized.entities } };
+  if (normalized.result.length !== 0) {
+    return {
+      user: { ids: normalized.result, entites: normalized.entities[userNormalizrSchemaKey] },
+    };
+  }
+  return { user: { ids: [], entites: {} } };
 });
 export const fetchUser = createAsyncThunk('user/getEntity', async (id: number) => {
   const response = await client.get<User>(`/users/${id}`);
@@ -60,7 +65,7 @@ export const userSlice = createSlice({
     builder.addCase(fetchUsers.fulfilled, (state, action) => {
       state.status = 'success';
       state.data.ids = action.payload.user.ids;
-      state.data.entities = action.payload.user.entites[userNormalizrSchemaKey];
+      state.data.entities = action.payload.user.entites;
     });
     builder.addCase(fetchUser.fulfilled, (state, action) => {
       state.status = 'success';
