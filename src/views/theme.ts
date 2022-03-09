@@ -1,5 +1,5 @@
 import { createTheme } from '@mui/material/styles';
-import { blue, deepOrange, blueGrey } from '@mui/material/colors';
+import { blue, blueGrey } from '@mui/material/colors';
 
 export const FLEXIBLE_MIN_WIDTH = 1025;
 export const FLEXIBLE_MAX_WIDTH = 1366;
@@ -7,7 +7,7 @@ export const FLEXIBLE_MAX_WIDTH = 1366;
 const theme = createTheme({
   palette: {
     primary: blue,
-    secondary: deepOrange,
+    secondary: blueGrey,
   },
   components: {
     MuiCssBaseline: {

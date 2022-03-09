@@ -1,6 +1,6 @@
 import React from 'react';
 import Box from '@mui/material/Box';
-import { FLEXIBLE_MIN_WIDTH, FLEXIBLE_MAX_WIDTH } from '../theme';
+import { FLEXIBLE_MIN_WIDTH, FLEXIBLE_MAX_WIDTH } from '../../theme';
 
 type MainContainerProps = {
   children: React.ReactNode;
