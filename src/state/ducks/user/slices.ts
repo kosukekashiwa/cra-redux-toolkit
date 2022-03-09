@@ -34,6 +34,12 @@ export const fetchUser = createAsyncThunk('user/getEntity', async (id: number) =
 export const postUser = createAsyncThunk('user/postEntity', async (name: string) => {
   await client.post(`/users`, { name });
 });
+export const putUser = createAsyncThunk('user/putEntity', async (user: User) => {
+  await client.put(`/users/${user.id}`, { name: user.name });
+});
+export const deleteUser = createAsyncThunk('user/deleteEntity', async (id: number) => {
+  await client.delete(`/users/${id}`);
+});
 
 // slice(action & reducer)
 export const userSlice = createSlice({
@@ -64,6 +70,12 @@ export const userSlice = createSlice({
       state.data.entities[action.payload.user.entity.id] = action.payload.user.entity;
     });
     builder.addCase(postUser.fulfilled, (state) => {
+      state.status = 'idle';
+    });
+    builder.addCase(putUser.fulfilled, (state) => {
+      state.status = 'idle';
+    });
+    builder.addCase(deleteUser.fulfilled, (state) => {
       state.status = 'idle';
     });
     // chenge state by article

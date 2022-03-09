@@ -8,6 +8,8 @@ import {
   getUser,
   getUsers,
   postUser,
+  putUser,
+  deleteUser,
 } from '../state/ducks/user/slices';
 import { RootState } from '../state/store';
 
@@ -21,6 +23,12 @@ const User: React.VFC = () => {
   const hadleUsersPostClick = useCallback(() => {
     dispatch(postUser('posted1'));
   }, [dispatch]);
+  const hadleUsersPutClick = useCallback(() => {
+    dispatch(putUser({ id: 2, name: 'edit123' }));
+  }, [dispatch]);
+  const hadleUsersDeleteClick = useCallback(() => {
+    dispatch(deleteUser(3));
+  }, [dispatch]);
 
   return (
     <Card>
@@ -31,6 +39,12 @@ const User: React.VFC = () => {
             <Box>
               <Button variant="outlined" onClick={hadleUsersPostClick}>
                 Post
+              </Button>
+              <Button variant="outlined" onClick={hadleUsersPutClick}>
+                Put
+              </Button>
+              <Button variant="outlined" onClick={hadleUsersDeleteClick}>
+                Delete
               </Button>
             </Box>
             {users.map((user) => (
