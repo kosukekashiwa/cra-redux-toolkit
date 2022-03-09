@@ -40,6 +40,9 @@ export const fetchArticle = createAsyncThunk('article/getEntity', async (id: num
     user: { entity: Object.values(normalized.entities[userNormalizrSchemaKey]).pop()! },
   };
 });
+export const deleteArticle = createAsyncThunk('article/deleteEntity', async (id: number) => {
+  await client.delete(`/articles/${id}`);
+});
 
 // slice(action & reducer)
 export const articleSlice = createSlice({
@@ -68,6 +71,9 @@ export const articleSlice = createSlice({
         state.data.ids.push(action.payload.article.entity.id);
       }
       state.data.entities[action.payload.article.entity.id] = action.payload.article.entity;
+    });
+    builder.addCase(deleteArticle.fulfilled, (state) => {
+      state.status = 'idle';
     });
   },
 });
