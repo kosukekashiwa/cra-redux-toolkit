@@ -13,10 +13,10 @@ for (let i = 0; i < 5; i++) {
 for (let i = 0; i < 5; i++) {
   db.articles.push({
     id: i,
-    title: 'articleTitle' + i,
+    title: `articleTitle-${i}`,
     author: {
       id: i % 3,
-      name: `authorName-${i % 3}`,
+      name: `userName-${i % 3}`,
     },
   });
 }
