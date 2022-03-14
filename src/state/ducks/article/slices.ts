@@ -40,9 +40,7 @@ export const fetchArticle = createAsyncThunk('article/getEntity', async (id: num
   const response = await client.get<Article>(`/articles/${id}`);
   const normalized = normalizeArticles([response.data]);
   return {
-    // eslint-disable-next-line
     article: { entity: Object.values(normalized.entities[articleNormalizrSchemaKey]).pop()! },
-    // eslint-disable-next-line
     user: { entity: Object.values(normalized.entities[userNormalizrSchemaKey]).pop()! },
   };
 });
@@ -72,7 +70,7 @@ export const articleSlice = createSlice({
       state.data.entities = action.payload.article.entities;
     });
     builder.addCase(fetchArticle.fulfilled, (state, action) => {
-      state.status = 'idle';
+      state.status = 'success';
       if (!state.data.entities[action.payload.article.entity.id]) {
         state.data.ids.push(action.payload.article.entity.id);
       }
