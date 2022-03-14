@@ -33,7 +33,7 @@
     "storybook": "start-storybook -p 6006 -s public",
     "build-storybook": "build-storybook -s public",
     "mock:genDb": "node genDb.js > db.json",
-    "mock:server": "json-server --watch db.json --port 3001",
+    "mock:server": "json-server --watch db.json --routes jsonServerRoutes.json --port 3001",
     "mock": "run-s mock:genDb mock:server"
   },
   "eslintConfig": {
