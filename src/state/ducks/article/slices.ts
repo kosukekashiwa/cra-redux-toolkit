@@ -3,6 +3,7 @@ import { client } from '../../apiClient';
 import { FetchStatus } from '../../hooks';
 import { RootState } from '../../store';
 import { userNormalizrSchemaKey } from '../user/models';
+import { UserState } from '../user/slices';
 import {
   denormalizeArticles,
   NormalizedArticles,
@@ -22,19 +23,33 @@ const initialState: ArticleState = {
 };
 
 // apis
-export const fetchArticles = createAsyncThunk('article/getEntities', async () => {
-  const response = await client.get<Article[]>(`/articles`);
-  const normalized = normalizeArticles(response.data);
-  if (normalized.result.length !== 0) {
+export const fetchArticles = createAsyncThunk<
+  {
+    article: ArticleState['data'];
+    user: { entities: UserState['data']['entities'] };
+  },
+  undefined,
+  { rejectValue: { errorMessage: string } }
+>('article/getEntities', async (_, thunkAPI) => {
+  try {
+    const response = await client.get<Article[]>(`/articles`);
+    const normalized = normalizeArticles(response.data);
+    if (normalized.result.length !== 0) {
+      return {
+        article: {
+          ids: normalized.result,
+          entities: normalized.entities[articleNormalizrSchemaKey],
+        },
+        user: { entities: normalized.entities[userNormalizrSchemaKey] },
+      };
+    }
     return {
-      article: { ids: normalized.result, entities: normalized.entities[articleNormalizrSchemaKey] },
-      user: { entities: normalized.entities[userNormalizrSchemaKey] },
+      article: { ids: [], entities: {} },
+      user: { entities: {} },
     };
+  } catch (e) {
+    return thunkAPI.rejectWithValue({ errorMessage: e.toString() });
   }
-  return {
-    article: { ids: [], entities: {} },
-    user: { entities: {} },
-  };
 });
 export const fetchArticle = createAsyncThunk('article/getEntity', async (id: number) => {
   const response = await client.get<Article>(`/articles/${id}`);
