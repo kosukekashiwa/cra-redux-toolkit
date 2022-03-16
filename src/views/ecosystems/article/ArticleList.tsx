@@ -20,13 +20,17 @@ const ArticleList: React.VFC = () => {
       <Stack spacing={2}>
         <Box>Article List</Box>
         <Box>
-          <Grid container spacing={2}>
-            {articles.map((article) => (
-              <Grid key={article.id} item xs={4}>
-                <ArticleCard article={article} />
-              </Grid>
-            ))}
-          </Grid>
+          {articles.length !== 0 ? (
+            <Grid container spacing={2}>
+              {articles.map((article) => (
+                <Grid key={article.id} item xs={4}>
+                  <ArticleCard article={article} />
+                </Grid>
+              ))}
+            </Grid>
+          ) : (
+            <Box>No Data</Box>
+          )}
         </Box>
       </Stack>
     </Paper>
